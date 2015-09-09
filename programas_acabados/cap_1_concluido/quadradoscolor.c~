@@ -1,0 +1,90 @@
+/* programa quadradoscolor.c */
+
+#include <GL/glut.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
+
+void display(void);
+void timer(int);
+void keyboard(unsigned char key, int x, int y);
+void HSItoRGB(int h); // a unica varivel que ira se modificar com o tempo eh H e S & I serao constantes s= 0.1 e i = 0.5 
+
+/* cores do quadrado */
+GLfloat r[4]={0.25,0.75,0.75,0.25};
+GLfloat g[4]={0.25,0.25,0.75,0.75};
+GLfloat b[4]={0.75,0.25,0.25,0.75};
+GLfloat h; // ultilizei o vetores de cores RGB para ser cada cor de cada vertice
+
+/* posições dos vertices do quadrado */
+GLfloat x[4]={0.25,0.75,0.75,0.25};
+GLfloat y[4]={0.25,0.25,0.75,0.75}; // posições dos vertices do quadrado
+int cont = 0; //contador da posição do vetor que servirá para modificar a cor
+
+int main(int argc, char** argv){
+  glutInit(&argc, argv);
+  glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
+  glutInitWindowSize (256, 256); 
+  glutInitWindowPosition (100, 100); 
+  glutCreateWindow (argv[0]);
+  // inicia um temporizador. após 33ms ativa a funcao timer
+  glutTimerFunc(33, timer, 1);
+  glClearColor(1.0, 1.0, 1.0, 0.0);
+  glShadeModel (GL_FLAT);
+  glOrtho (0, 1, 0, 1, -1 ,1);
+  glutDisplayFunc(display);
+  glutMainLoop();
+  return 0;
+}
+
+void HSItoRGB(int h){ 
+  int i = 0;
+while(i<4){  // converter a cor de cada um dos 4 vertices.
+
+// i=0.5   s=0.1
+  if(h<120){
+     b[i] = 0.45; // como o b = i(1-s), resolvi fazer a conta direto
+     r[i] = 0.5*(1 + 0.1*cosf(M_PI*h/180)/sinf(M_PI/3 - M_PI*h/180));
+// as funcoes cosf e senf recebem como parametros de entrada angulos em radianos e M_PI eh o numero PI 
+     g[i] = 1.5 - (r[i]+b[i]);
+}
+
+if(h >= 120 && h <= 240){
+      h = h-120;
+      r[i] = 0.45;
+      g[i] = 0.5*(1 + 0.1*cosf(M_PI*h/180)/sinf(M_PI/3 - M_PI*h/180));
+      b[i] = 1.5 - (r[i]+b[i]);
+}
+if(h >= 240 && h <= 360){
+      h = h - 240;
+      g[i] = 0.45;
+      b[i] = 0.5*(1 + 0.1*cosf(M_PI*h/180)/sinf(M_PI/3 - M_PI*h/180));
+      r[i] = 1.5 - (r[i]+b[i]);
+
+}
+
+	i = 1 +1;
+
+}
+}
+
+void timer(int value){
+  h = h+1;  // como no exercicio se pede só ah variacoes de H
+  if(h>360) h=0;  // como H eh um angulo eh necessário que retorne a 0 apos 360.
+  HSItoRGB(h);  // funcao descrita que calcula o valor RGB em funcao de HSI, sendo S & I constantes.
+  glutPostRedisplay();
+  glutTimerFunc(33, timer, 1);
+}
+
+void display(void){
+  int i = 0;
+  glClear(GL_COLOR_BUFFER_BIT);
+  glBegin(GL_POLYGON);
+  while(i<4){
+  glColor3f (r[i], g[i], b[i]);
+  glVertex2f(x[i],y[i]);
+  i = i+1;
+ }
+  glEnd();
+  glFlush();
+}
