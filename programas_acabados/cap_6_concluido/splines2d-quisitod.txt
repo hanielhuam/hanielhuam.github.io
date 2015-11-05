@@ -1,0 +1,1 @@
+ Na minha opinião as splines são superiores as curvas de Bezier por também poderem emular o comportamento das curvas de Bezier e ainda provê um melhor controle por possibilitarem o uso de mais pontos de controle. Que por um lado também pode atrapalhar na hora de modelar a curva e que altera dependendo da sequênciaadotada dos seguimentos de t. 
